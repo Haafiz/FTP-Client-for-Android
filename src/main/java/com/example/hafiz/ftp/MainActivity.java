@@ -40,6 +40,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
     public void newSite(View view) {
         Intent intent = new Intent(this, SiteManager.class);
+        startActivity(intent);
     }
 
     private void loadSpinnerData(DatabaseHandler dbHandler) {

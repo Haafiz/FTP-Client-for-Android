@@ -15,6 +15,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Site Name : "
+            android:gravity="left"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/sitename"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Host : "
             android:gravity="left"
             />
@@ -69,9 +87,24 @@
         >
         <RadioGroup
             android:layout_width="match_parent"
+            android:orientation="horizontal"
             android:layout_height="wrap_content">
-        
+            <RadioButton
+                android:layout_width="match_parent"
+                android:text="Active"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:layout_width="match_parent"
+                android:text="Passive"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
         </RadioGroup>
     </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:text="Save Site Detail"
+        android:layout_gravity="right"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
