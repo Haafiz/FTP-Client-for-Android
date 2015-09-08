@@ -1,14 +1,21 @@
 package com.example.hafiz.ftp;
 
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnItemSelectedListener {
 
     Spinner spinner;
 
@@ -20,17 +27,24 @@ public class MainActivity extends Activity {
         // Spinner element
         spinner = (Spinner) findViewById(R.id.spinner);
 
-        spinner.setOnItemClickListener(this);
+        // database handler
+        DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
 
-        loadSpinnerData();
+        // Gets the data repository in read mode
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+
+        spinner.setOnItemSelectedListener(this);
+
+        loadSpinnerData(dbHandler);
     }
 
-    private void loadSpinnerData() {
-        // database handler
-        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+    public void newSite(View view) {
+        Intent intent = new Intent(this, SiteManager.class);
+    }
 
+    private void loadSpinnerData(DatabaseHandler dbHandler) {
         // Spinner Drop down elements
-        List<String> lables = db.getAllSites();
+        List<String> lables = dbHandler.getAllSites();
 
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
@@ -41,6 +55,18 @@ public class MainActivity extends Activity {
 
         // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position,
+                               long id) {
+        // On selecting a spinner item
+        String label = parent.getItemAtPosition(position).toString();
+
+        // Showing selected spinner item
+        Toast.makeText(parent.getContext(), "You selected: " + label,
+                Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -63,5 +89,11 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
+
     }
 }

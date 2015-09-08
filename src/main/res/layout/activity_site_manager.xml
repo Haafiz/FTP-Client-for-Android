@@ -4,9 +4,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity"
     android:orientation="vertical"
-    android:layout_gravity="center_vertical">
+    tools:context="com.example.hafiz.ftp.SiteManager">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,44 +15,63 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select Site"
+            android:text="Host : "
             android:gravity="left"
             />
-        <Spinner
+
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinner"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:id="@+id/host"
+            android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:layout_width="match_parent"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1"
-            android:text="Delete"/>
-        <Button
+            android:text="Login : "
+            android:gravity="left"
+            />
+
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
             android:layout_weight="1"
-            android:text="Edit"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1"
-            android:text="Connect"/>
+            android:id="@+id/login"
+            android:layout_height="wrap_content" />
     </LinearLayout>
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginTop="50dp"
-        android:onClick="newSite"
-        android:text="New Site"/>
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password : "
+            android:gravity="left"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:password="true"
+            android:id="@+id/password"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        
+        </RadioGroup>
+    </LinearLayout>
+
 </LinearLayout>

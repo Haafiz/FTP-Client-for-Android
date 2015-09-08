@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Version
@@ -71,7 +70,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT  * FROM " + DBContract.Site.TABLE_NAME;
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
