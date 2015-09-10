@@ -1,16 +1,112 @@
 package com.example.hafiz.ftp;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import java.util.Map;
 
 public class SiteManager extends Activity {
+
+    SQLiteDatabase db;
+    DatabaseHandler dbHandler;
+    String editId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_site_manager);
+
+        dbHandler = new DatabaseHandler(getApplicationContext());
+        db = dbHandler.getWritableDatabase();
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("site")){
+            String sitename = intent.getStringExtra("site");
+            populateForm(sitename);
+        }
+    }
+
+    public void populateForm(String sitename) {
+        Map<String, String> site = dbHandler.getSite(sitename);
+
+        editId = site.get("_id");
+
+        editId = site.get("_id");
+
+        EditText site_name = (EditText) findViewById(R.id.site_name);
+        site_name.setText(site.get("site_name"));
+
+        EditText login = (EditText) findViewById(R.id.login);
+        login.setText(site.get("login"));
+
+        EditText host = (EditText) findViewById(R.id.host);
+        login.setText(site.get("host"));
+
+        EditText password = (EditText) findViewById(R.id.password);
+        password.setText(site.get("password"));
+
+        RadioGroup grp =  (RadioGroup) findViewById(R.id.type);
+        if(site.get("type") == "Active") {
+            RadioButton rb = (RadioButton) findViewById(R.id.active);
+            rb.setChecked(true);
+        }else {
+            RadioButton rb = (RadioButton) findViewById(R.id.passive);
+            rb.setChecked(true);
+        }
+    }
+
+    public boolean saveSite(View view){
+        EditText sitename = (EditText) findViewById(R.id.site_name);
+        EditText login = (EditText) findViewById(R.id.login);
+        EditText host = (EditText) findViewById(R.id.host);
+        EditText password = (EditText) findViewById(R.id.password);
+        RadioGroup grp =  (RadioGroup) findViewById(R.id.type);
+
+        int selectedID = grp.getCheckedRadioButtonId();
+        RadioButton type = (RadioButton) findViewById(selectedID);
+
+        ContentValues data = new ContentValues();
+
+        data.put(DBContract.Site.COLUMN_NAME_SITE_NAME, sitename.getText().toString());
+        data.put(DBContract.Site.COLUMN_NAME_LOGIN, login.getText().toString());
+        data.put(DBContract.Site.COLUMN_NAME_HOST, host.getText().toString());
+        data.put(DBContract.Site.COLUMN_NAME_PASSWORD, password.getText().toString());
+        data.put(DBContract.Site.COLUMN_NAME_TYPE, type.getText().toString());
+
+        long saved = 0;
+        if(editId == null) {
+            try {
+                saved = db.insertOrThrow(DBContract.Site.TABLE_NAME, null, data);
+            } catch (SQLiteConstraintException ex) {
+                Toast.makeText(getApplicationContext(),"Site name already exist",Toast.LENGTH_LONG).show();
+            }
+        } else {
+            try {
+                saved = db.updateWithOnConflict(DBContract.Site.TABLE_NAME, data, DBContract.Site._ID, null, SQLiteDatabase.CONFLICT_ABORT);
+            } catch (SQLiteConstraintException ex) {
+                Toast.makeText(getApplicationContext(),"Site name already exist",Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if( saved != -1) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("message", "Connection Saved Successfully");
+            startActivity(intent);
+        }
+
+        return true;
     }
 
     @Override

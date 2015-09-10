@@ -3,6 +3,7 @@ package com.example.hafiz.ftp;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
@@ -30,12 +31,18 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
 
-        // Gets the data repository in read mode
+        // Gets the data repository in write mode
         SQLiteDatabase db = dbHandler.getWritableDatabase();
 
         spinner.setOnItemSelectedListener(this);
 
         loadSpinnerData(dbHandler);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("message")){
+            String message = intent.getStringExtra("message");
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void newSite(View view) {
@@ -43,13 +50,21 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         startActivity(intent);
     }
 
+    public void editSite(View view) {
+        Intent intent = new Intent(this, SiteManager.class);
+        Object item = spinner.getSelectedItem();
+
+        intent.putExtra("site", item.toString());
+        startActivity(intent);
+    }
+
     private void loadSpinnerData(DatabaseHandler dbHandler) {
         // Spinner Drop down elements
-        List<String> lables = dbHandler.getAllSites();
+        List<String> labels = dbHandler.getAllSites();
 
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, lables);
+                android.R.layout.simple_spinner_item, labels);
 
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

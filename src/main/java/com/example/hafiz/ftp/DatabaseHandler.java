@@ -1,7 +1,9 @@
 package com.example.hafiz.ftp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "ftp";
@@ -32,7 +34,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 DBContract.Site.COLUMN_NAME_SITE_NAME + TEXT_TYPE + COMMA_SEP +
                 DBContract.Site.COLUMN_NAME_LOGIN + TEXT_TYPE + COMMA_SEP +
                 DBContract.Site.COLUMN_NAME_HOST + TEXT_TYPE + COMMA_SEP +
-                DBContract.Site.COLUMN_NAME_PASSWORD + TEXT_TYPE + " );";
+                DBContract.Site.COLUMN_NAME_TYPE + TEXT_TYPE + COMMA_SEP +
+                DBContract.Site.COLUMN_NAME_PASSWORD + TEXT_TYPE + " UNIQUE("+DBContract.Site.COLUMN_NAME_SITE_NAME+") );";
         db.execSQL(CREATE_SITES_TABLE);
     }
 
@@ -46,23 +49,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    /**
-     * Inserting new site into sites table
-     * */
-    public void insertSite(String label){
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(DBContract.Site.COLUMN_NAME_SITE_NAME, label);
-
-        // Inserting Row
-        db.insert(DBContract.Site.TABLE_NAME, null, values);
-        db.close(); // Closing database connection
-    }
 
     /**
-     * Getting all labels
-     * returns list of labels
+     * Getting all sites
+     * returns list of sites
      * */
     public List<String> getAllSites(){
         List<String> sites = new ArrayList<String>();
@@ -86,5 +76,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // returning sites
         return sites;
+    }
+
+    public Map<String, String> getSite(String sitename){
+        Map<String, String> site = new HashMap<>();
+
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + DBContract.Site.TABLE_NAME + " where site_name ='"+sitename+"' ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all columns
+        if (cursor.moveToFirst()) {
+            for( int  i = 0; i < cursor.getColumnCount(); i++){
+                site.put(cursor.getColumnName(i), cursor.getString(i));
+            }
+        }
+
+        // closing connection
+        cursor.close();
+        db.close();
+
+        // returning sites
+        return site;
     }
 }

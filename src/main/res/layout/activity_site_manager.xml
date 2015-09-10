@@ -22,7 +22,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:id="@+id/sitename"
+            android:id="@+id/site_name"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
@@ -88,15 +88,18 @@
         <RadioGroup
             android:layout_width="match_parent"
             android:orientation="horizontal"
+            android:id = '@+id/type'
             android:layout_height="wrap_content">
             <RadioButton
                 android:layout_width="match_parent"
                 android:text="Active"
+                android:id="@+id/active"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
             <RadioButton
                 android:layout_width="match_parent"
                 android:text="Passive"
+                android:id="@+id/passive"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </RadioGroup>
@@ -104,6 +107,7 @@
     <Button
         android:layout_width="wrap_content"
         android:text="Save Site Detail"
+        android:onClick="saveSite"
         android:layout_gravity="right"
         android:layout_height="wrap_content" />
 
