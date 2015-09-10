@@ -35,7 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 DBContract.Site.COLUMN_NAME_LOGIN + TEXT_TYPE + COMMA_SEP +
                 DBContract.Site.COLUMN_NAME_HOST + TEXT_TYPE + COMMA_SEP +
                 DBContract.Site.COLUMN_NAME_TYPE + TEXT_TYPE + COMMA_SEP +
-                DBContract.Site.COLUMN_NAME_PASSWORD + TEXT_TYPE + " UNIQUE("+DBContract.Site.COLUMN_NAME_SITE_NAME+") );";
+                DBContract.Site.COLUMN_NAME_PASSWORD + TEXT_TYPE + COMMA_SEP + " UNIQUE("+DBContract.Site.COLUMN_NAME_SITE_NAME+") );";
         db.execSQL(CREATE_SITES_TABLE);
     }
 

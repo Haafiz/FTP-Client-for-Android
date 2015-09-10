@@ -43,13 +43,11 @@ public class SiteManager extends Activity {
 
         editId = site.get("_id");
 
-        editId = site.get("_id");
-
         EditText site_name = (EditText) findViewById(R.id.site_name);
         site_name.setText(site.get("site_name"));
 
         EditText login = (EditText) findViewById(R.id.login);
-        login.setText(site.get("login"));
+        login.setText(site.get("login_name"));
 
         EditText host = (EditText) findViewById(R.id.host);
         login.setText(site.get("host"));
@@ -85,7 +83,7 @@ public class SiteManager extends Activity {
         data.put(DBContract.Site.COLUMN_NAME_PASSWORD, password.getText().toString());
         data.put(DBContract.Site.COLUMN_NAME_TYPE, type.getText().toString());
 
-        long saved = 0;
+        long saved = -1;
         if(editId == null) {
             try {
                 saved = db.insertOrThrow(DBContract.Site.TABLE_NAME, null, data);
