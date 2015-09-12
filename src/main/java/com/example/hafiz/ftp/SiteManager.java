@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public class SiteManager extends Activity {
@@ -40,7 +41,7 @@ public class SiteManager extends Activity {
 
     public void populateForm(String sitename) {
         Map<String, String> site = dbHandler.getSite(sitename);
-
+        Log.d("Map", site.toString());
         editId = site.get("_id");
 
         EditText site_name = (EditText) findViewById(R.id.site_name);
@@ -50,7 +51,7 @@ public class SiteManager extends Activity {
         login.setText(site.get("login_name"));
 
         EditText host = (EditText) findViewById(R.id.host);
-        login.setText(site.get("host"));
+        host.setText(site.get("host"));
 
         EditText password = (EditText) findViewById(R.id.password);
         password.setText(site.get("password"));
@@ -91,11 +92,13 @@ public class SiteManager extends Activity {
                 Toast.makeText(getApplicationContext(),"Site name already exist",Toast.LENGTH_LONG).show();
             }
         } else {
-            try {
-                saved = db.updateWithOnConflict(DBContract.Site.TABLE_NAME, data, DBContract.Site._ID, null, SQLiteDatabase.CONFLICT_ABORT);
+            String[] arr = new String[] {String.valueOf(editId)};
+            try{
+                saved = db.update(DBContract.Site.TABLE_NAME, data, DBContract.Site._ID + "=?", arr);
             } catch (SQLiteConstraintException ex) {
                 Toast.makeText(getApplicationContext(),"Site name already exist",Toast.LENGTH_LONG).show();
             }
+
         }
 
         if( saved != -1) {

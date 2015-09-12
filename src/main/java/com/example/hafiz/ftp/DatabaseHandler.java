@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 1;
 
     // Database Name
     private static final String DATABASE_NAME = "ftp";
@@ -96,7 +96,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // closing connection
         cursor.close();
-        db.close();
 
         // returning sites
         return site;
