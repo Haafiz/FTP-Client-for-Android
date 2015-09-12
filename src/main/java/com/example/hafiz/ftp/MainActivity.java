@@ -2,6 +2,7 @@ package com.example.hafiz.ftp;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -31,9 +32,6 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
 
-        // Gets the data repository in write mode
-        SQLiteDatabase db = dbHandler.getWritableDatabase();
-
         spinner.setOnItemSelectedListener(this);
 
         loadSpinnerData(dbHandler);
@@ -56,6 +54,24 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
         intent.putExtra("site", item.toString());
         startActivity(intent);
+    }
+
+    public void deleteSite(View view) {
+        Object item = spinner.getSelectedItem();
+
+        DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
+        boolean deleted = false;
+
+        try{
+            deleted = dbHandler.deleteSiteBySitename(item.toString());
+        } catch (SQLiteException ex) {
+            Toast.makeText(getApplicationContext(), ex.toString(),Toast.LENGTH_LONG).show();
+        }
+
+        if(deleted) {
+            loadSpinnerData(dbHandler);
+            Toast.makeText(getApplicationContext(), "Site '"+item.toString()+"' Deleted Successfully",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void loadSpinnerData(DatabaseHandler dbHandler) {

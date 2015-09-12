@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_weight="1"
+            android:onClick="deleteSite"
             android:text="Delete"/>
         <Button
             android:layout_width="match_parent"

@@ -78,6 +78,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return sites;
     }
 
+    public boolean deleteSiteBySitename(String site_name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(DBContract.Site.TABLE_NAME, DBContract.Site.COLUMN_NAME_SITE_NAME + " = ?",
+                new String[] { site_name });
+
+        db.close();
+
+        return true;
+    }
+
     public Map<String, String> getSite(String sitename){
         Map<String, String> site = new HashMap<>();
 
