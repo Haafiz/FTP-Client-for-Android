@@ -48,6 +48,16 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         startActivity(intent);
     }
 
+    public void connect(View view) {
+        //FtpTask task = new FtpTask();
+        //task.execute();
+        Intent intent = new Intent(this, OperationActivity.class);
+        Object item = spinner.getSelectedItem();
+
+        intent.putExtra("site", item.toString());
+        startActivity(intent);
+    }
+
     public void editSite(View view) {
         Intent intent = new Intent(this, SiteManager.class);
         Object item = spinner.getSelectedItem();
