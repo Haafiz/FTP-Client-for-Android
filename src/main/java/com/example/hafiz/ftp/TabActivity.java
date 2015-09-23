@@ -3,6 +3,7 @@ package com.example.hafiz.ftp;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
+import android.widget.TextView;
 
 public class TabActivity extends FragmentActivity {
     private FragmentTabHost mTabHost;
@@ -16,13 +17,15 @@ public class TabActivity extends FragmentActivity {
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
         mTabHost.addTab(
-                mTabHost.newTabSpec("tab1").setIndicator("Tab 1", null),
-                TabFragment.class, null);
+                mTabHost.newTabSpec("remote").setIndicator("Remote", null),
+                RemoteTabFragment.class, null);
         mTabHost.addTab(
-                mTabHost.newTabSpec("tab2").setIndicator("Tab 2", null),
-                TabFragment.class, null);
-        mTabHost.addTab(
-                mTabHost.newTabSpec("tab3").setIndicator("Tab 3", null),
-                TabFragment.class, null);
+                mTabHost.newTabSpec("local").setIndicator("Local", null),
+                LocalTabFragment.class, null);
+    }
+
+    public void setLog(String message) {
+        TextView tv = (TextView) findViewById(R.id.parentlog);
+        tv.setText(message);
     }
 }
