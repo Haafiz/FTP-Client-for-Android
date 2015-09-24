@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
+import java.util.Map;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -19,9 +20,19 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     private String exception;
     private Context context;
     private String message;
+    private Map<String, String> site;
+    private String task = "list";
+    private String[] args;
+    private FTPFile[] files;
 
-    public FtpTask(Context mcontext) {
+    public FtpTask(Context mcontext, Map<String, String> msite, String task) {
         context = mcontext;
+        site = msite;
+    }
+
+    public FtpTask(Context mcontext, Map<String, String> msite, String task, String[] args) {
+        context = mcontext;
+        site = msite;
     }
 
     protected FTPClient doInBackground(Void... args) {
@@ -84,19 +95,38 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
             }
         }
 */
+
         try {
             FTPClient ftpClient = new FTPClient();
-            ftpClient.connect(host);
+            ftpClient.connect(site.get("host"));
             //ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
-            ftpClient.login(login, password);
+            ftpClient.login(site.get("login"), site.get("password"));
             //ftpClient.enterRemotePassiveMode();
             //ftpClient.changeWorkingDirectory("/");
             //FTPListParseEngine engine = ftpClient.initiateListParsing()
-            FTPFile[] files = ftpClient.listFiles("/public_html");
-            Log.d("file length", "" + files.length);
-            String reply2 = ftpClient.getStatus();
-            Log.d("Reply", reply2);
+            switch (task) {
+                case "list":
+                    files = ftpClient.listFiles("/");
+                    break;
+                case "upload":
+                    break;
+                case "download":
+                    break;
+                case "delete":
+                    break;
+                default:
+                    files = ftpClient.listFiles("/");
+            }
+
+            String reply = ftpClient.getReplyString();
+            if (ftpClient.getReplyString().contains("250")) {
+                message = "Files loaded";
+            } else {
+                message = reply;
+            }
+
+            /*
             BufferedInputStream buffIn = null;
 
             for (FTPFile file : files) {
@@ -109,15 +139,17 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
                     Log.d("filename", fileName);
                 }
             }
-
+            */
 
         } catch (Exception e) {
             exception = e.toString();
         }
+
         return ftpClient;
     }
 
     protected void onPostExecute(FTPClient result) {
+        Log.d("result",result.toString());
         if(exception != null) {
             Toast.makeText(context, exception, Toast.LENGTH_LONG).show();
         } else {

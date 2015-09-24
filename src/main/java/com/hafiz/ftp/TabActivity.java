@@ -1,9 +1,12 @@
 package com.hafiz.ftp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.widget.TextView;
+
+import java.util.Map;
 
 public class TabActivity extends FragmentActivity {
     private FragmentTabHost mTabHost;
@@ -23,7 +26,12 @@ public class TabActivity extends FragmentActivity {
                 mTabHost.newTabSpec("local").setIndicator("Local", null),
                 LocalTabFragment.class, null);
 
-        new FtpTask(this).execute();
+        String sitename = getIntent().getStringExtra('site');
+
+        DatabaseHandler dbHandler = new DatabaseHandler(this);
+        Map<String, String> site = dbHandler.getSite(sitename)
+
+        new FtpTask(this, site).execute();
     }
 
     public void setLog(String message) {
