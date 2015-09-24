@@ -26,12 +26,12 @@ public class TabActivity extends FragmentActivity {
                 mTabHost.newTabSpec("local").setIndicator("Local", null),
                 LocalTabFragment.class, null);
 
-        String sitename = getIntent().getStringExtra('site');
+        String sitename = getIntent().getStringExtra("site");
 
         DatabaseHandler dbHandler = new DatabaseHandler(this);
-        Map<String, String> site = dbHandler.getSite(sitename)
+        Map<String, String> site = dbHandler.getSite(sitename);
 
-        new FtpTask(this, site).execute();
+        new FtpTask(this, site, "list").execute();
     }
 
     public void setLog(String message) {
