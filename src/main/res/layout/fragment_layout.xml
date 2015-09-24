@@ -6,11 +6,26 @@
     android:orientation="vertical"
     android:background="#eaecee">
 
-    <EditText
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/address_bar"
+            android:layout_gravity="left"
+            android:layout_weight="3"
+            android:editable="false"
+            />
+
+    </LinearLayout>
+
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/address_bar"
-        />
+        android:id="@+id/listview">
+    </ListView>
+
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
@@ -18,5 +33,6 @@
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/hello_world"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
 
 </LinearLayout>
