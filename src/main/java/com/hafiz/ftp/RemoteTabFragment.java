@@ -1,19 +1,14 @@
-package com.example.hafiz.ftp;
+package com.hafiz.ftp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RemoteTabFragment extends Fragment {
@@ -42,6 +37,7 @@ public class RemoteTabFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_layout, container, false);
         TabActivity activity = (TabActivity) this.getActivity();
 
+
         String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
                 "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
                 "Linux", "OS/2" };
@@ -51,13 +47,14 @@ public class RemoteTabFragment extends Fragment {
         ListView listView =  (ListView) v.findViewById(R.id.listview);
         listView.setAdapter(adapter);
 
+        /*
         ArrayList<String> adapterValues = adapter.getSelected();
 
         Toast.makeText(getContext(),
                 adapterValues.toString(),
                 Toast.LENGTH_LONG).show();
 
-        /*
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

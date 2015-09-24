@@ -1,4 +1,4 @@
-package com.example.hafiz.ftp;
+package com.hafiz.ftp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

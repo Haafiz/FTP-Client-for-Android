@@ -1,4 +1,4 @@
-package com.example.hafiz.ftp;
+package com.hafiz.ftp;
 
 /**
  * Created by Hafiz on 9/8/2015.

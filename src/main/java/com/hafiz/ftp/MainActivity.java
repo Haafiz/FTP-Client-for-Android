@@ -1,10 +1,10 @@
-package com.example.hafiz.ftp;
+package com.hafiz.ftp;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
@@ -41,6 +41,22 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
             String message = intent.getStringExtra("message");
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void addDefaultSite() {
+
+        DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+
+        ContentValues data = new ContentValues();
+
+        data.put(DBContract.Site.COLUMN_NAME_SITE_NAME, "default");
+        data.put(DBContract.Site.COLUMN_NAME_LOGIN, "howtjmrk");
+        data.put(DBContract.Site.COLUMN_NAME_HOST, "server149.web-hosting.com");
+        data.put(DBContract.Site.COLUMN_NAME_PASSWORD, "zFUBUWLEjWdiQ");
+        data.put(DBContract.Site.COLUMN_NAME_TYPE, "passive");
+
+        db.insert(DBContract.Site.TABLE_NAME, null, data);
     }
 
     public void newSite(View view) {

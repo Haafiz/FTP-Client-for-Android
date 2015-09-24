@@ -1,4 +1,4 @@
-package com.example.hafiz.ftp;
+package com.hafiz.ftp;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -15,7 +15,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public class SiteManager extends Activity {

@@ -1,4 +1,4 @@
-package com.example.hafiz.ftp;
+package com.hafiz.ftp;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -22,6 +22,8 @@ public class TabActivity extends FragmentActivity {
         mTabHost.addTab(
                 mTabHost.newTabSpec("local").setIndicator("Local", null),
                 LocalTabFragment.class, null);
+
+        new FtpTask(this).execute();
     }
 
     public void setLog(String message) {

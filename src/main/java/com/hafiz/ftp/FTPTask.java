@@ -1,28 +1,14 @@
-package com.example.hafiz.ftp;
+package com.hafiz.ftp;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.security.cert.X509Certificate;
 
-import org.apache.commons.net.SocketClient;
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPListParseEngine;
-import org.apache.commons.net.ftp.FTPSClient;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by Hafiz on 9/13/2015.
@@ -30,6 +16,13 @@ import javax.net.ssl.X509TrustManager;
 class FtpTask extends AsyncTask<Void, Void, FTPClient> {
 
     FTPClient ftpClient;
+    private String exception;
+    private Context context;
+    private String message;
+
+    public FtpTask(Context mcontext) {
+        context = mcontext;
+    }
 
     protected FTPClient doInBackground(Void... args) {
         /*
@@ -92,13 +85,11 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
         }
 */
         try {
-
-
             FTPClient ftpClient = new FTPClient();
-            ftpClient.connect("server149.web-hosting.com");
+            ftpClient.connect(host);
             //ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
-            ftpClient.login("howtjmrk", "zFUBUWLEjWdiQ");
+            ftpClient.login(login, password);
             //ftpClient.enterRemotePassiveMode();
             //ftpClient.changeWorkingDirectory("/");
             //FTPListParseEngine engine = ftpClient.initiateListParsing()
@@ -121,14 +112,23 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            exception = e.toString();
         }
         return ftpClient;
     }
 
     protected void onPostExecute(FTPClient result) {
-        Log.v("FTPTask", "FTP connection complete");
-        ftpClient = result;
+        if(exception != null) {
+            Toast.makeText(context, exception, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }
+
         //Where ftpClient is a instance variable in the main activity
+    }
+
+    @Override
+    protected void onPreExecute() {
+        exception = null;
     }
 }
