@@ -1,5 +1,6 @@
 package com.hafiz.ftp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ListViewAutoScrollHelper;
@@ -10,19 +11,30 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class RemoteTabFragment extends Fragment {
+public class RemoteTabFragment extends Fragment implements FTPResponse{
 
     ArrayAdapter dataAdapter = null;
+    Map<String, String> site;
+    Bundle args;
+    Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        args = getArguments();
+    }
+
+    public void setSite(Map<String, String> msite) {
+        site = msite;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        context = getContext();
         //Array list of countries
         ArrayList<String> countryList = new ArrayList<String>();
         String country = "Afghanistan";
@@ -32,11 +44,18 @@ public class RemoteTabFragment extends Fragment {
         country = "Algeria";
         countryList.add(country);
 
-        dataAdapter = new ArrayAdapter(getContext(), R.layout.list_row, countryList);
+        dataAdapter = new ArrayAdapter(context, R.layout.list_row, countryList);
 
         View v = inflater.inflate(R.layout.fragment_layout, container, false);
         TabActivity activity = (TabActivity) this.getActivity();
 
+        String sitename = args.getString("sitename");
+        DatabaseHandler dbHandler = new DatabaseHandler(context);
+        Map<String, String> site = dbHandler.getSite(sitename);
+
+        FtpTask task = new FtpTask(context, site, "list");
+        task.delegate = this;
+        task.execute();
 
         String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
                 "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
@@ -47,6 +66,8 @@ public class RemoteTabFragment extends Fragment {
         ListView listView =  (ListView) v.findViewById(R.id.listview);
         listView.setAdapter(adapter);
 
+
+        //)
         /*
         ArrayList<String> adapterValues = adapter.getSelected();
 
@@ -70,5 +91,21 @@ public class RemoteTabFragment extends Fragment {
         ListViewAutoScrollHelper listViewAutoScrollHelper = new ListViewAutoScrollHelper(listView);
 
         return v;
+    }
+
+    public void processListResponse(String output){
+
+    }
+
+    public void processUploadResponse(String output) {
+
+    }
+
+    public void processDownloadResponse(String output) {
+
+    }
+
+    public void processDeleteResponse(String output) {
+
     }
 }

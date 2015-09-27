@@ -16,6 +16,8 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 class FtpTask extends AsyncTask<Void, Void, FTPClient> {
 
+    public FTPResponse delegate=null;
+
     FTPClient ftpClient;
     private String exception;
     private Context context;
@@ -151,10 +153,26 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     protected void onPostExecute(FTPClient result) {
         Log.d("result",result.toString());
         if(exception != null) {
-            Toast.makeText(context, exception, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            message = exception;
         }
+
+        switch (task) {
+            case "list":
+                delegate.processListResponse(message);
+                break;
+            case "upload":
+                delegate.processUploadResponse(message);
+                break;
+            case "download":
+                delegate.processDownloadResponse(message);
+                break;
+            case "delete":
+                delegate.processDeleteResponse(message);
+                break;
+            default:
+                break;
+        }
+
 
         //Where ftpClient is a instance variable in the main activity
     }

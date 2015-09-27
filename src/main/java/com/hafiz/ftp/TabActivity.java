@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.Map;
 
 public class TabActivity extends FragmentActivity {
-    private FragmentTabHost mTabHost;
+        private FragmentTabHost mTabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,19 +19,16 @@ public class TabActivity extends FragmentActivity {
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
+        String sitename = getIntent().getStringExtra("site");
+
+        Bundle remotetabBundle = new Bundle();
+        b.putString("sitename", sitename);
         mTabHost.addTab(
                 mTabHost.newTabSpec("remote").setIndicator("Remote", null),
-                RemoteTabFragment.class, null);
+                RemoteTabFragment.class, remotetabBundle);
         mTabHost.addTab(
                 mTabHost.newTabSpec("local").setIndicator("Local", null),
                 LocalTabFragment.class, null);
-
-        String sitename = getIntent().getStringExtra("site");
-
-        DatabaseHandler dbHandler = new DatabaseHandler(this);
-        Map<String, String> site = dbHandler.getSite(sitename);
-
-        new FtpTask(this, site, "list").execute();
     }
 
     public void setLog(String message) {
