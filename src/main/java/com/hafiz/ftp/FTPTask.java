@@ -97,13 +97,13 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
             }
         }
 */
-
+        Log.d("siteobj", site.toString());
         try {
             FTPClient ftpClient = new FTPClient();
             ftpClient.connect(site.get("host"));
             //ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
-            ftpClient.login(site.get("login"), site.get("password"));
+            ftpClient.login(site.get("login_name"), site.get("password"));
             //ftpClient.enterRemotePassiveMode();
             //ftpClient.changeWorkingDirectory("/");
             //FTPListParseEngine engine = ftpClient.initiateListParsing()
@@ -151,14 +151,14 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     }
 
     protected void onPostExecute(FTPClient result) {
-        Log.d("result",result.toString());
+        Log.d("result",files.toString());
         if(exception != null) {
             message = exception;
         }
 
         switch (task) {
             case "list":
-                delegate.processListResponse(message);
+                delegate.processListResponse(message, files);
                 break;
             case "upload":
                 delegate.processUploadResponse(message);

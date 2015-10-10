@@ -4,11 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ListViewAutoScrollHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import org.apache.commons.net.ftp.FTPFile;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -93,8 +96,10 @@ public class RemoteTabFragment extends Fragment implements FTPResponse{
         return v;
     }
 
-    public void processListResponse(String output){
-
+    public void processListResponse(String output, FTPFile[] files){
+        for (FTPFile file : files) {
+            Log.d("filename", file.getName());
+        }
     }
 
     public void processUploadResponse(String output) {

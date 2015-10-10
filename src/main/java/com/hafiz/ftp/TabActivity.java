@@ -21,11 +21,11 @@ public class TabActivity extends FragmentActivity {
 
         String sitename = getIntent().getStringExtra("site");
 
-        Bundle remotetabBundle = new Bundle();
-        b.putString("sitename", sitename);
+        Bundle remoteTabBundle = new Bundle();
+        remoteTabBundle.putString("sitename", sitename);
         mTabHost.addTab(
                 mTabHost.newTabSpec("remote").setIndicator("Remote", null),
-                RemoteTabFragment.class, remotetabBundle);
+                RemoteTabFragment.class, remoteTabBundle);
         mTabHost.addTab(
                 mTabHost.newTabSpec("local").setIndicator("Local", null),
                 LocalTabFragment.class, null);
