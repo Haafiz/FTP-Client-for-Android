@@ -17,6 +17,9 @@ import android.widget.Toast;
 
 import java.util.List;
 
+/**
+ * First screen to showing different option, before connecting to FTP server
+ */
 public class MainActivity extends Activity implements OnItemSelectedListener {
 
     Spinner spinner;
@@ -26,23 +29,39 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Spinner element
-        spinner = (Spinner) findViewById(R.id.spinner);
-
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
         //addDefaultSite();
+
+        // Spinner element
+        spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(this);
 
         loadSpinnerData(dbHandler);
 
-        Intent intent = getIntent();
-        if(intent.hasExtra("message")){
-            String message = intent.getStringExtra("message");
-            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-        }
+        this.showIntentMessage();
     }
 
+    /**
+     * Show and return if there is message String in intent extra
+     *
+     * @return String message
+     */
+    private String showIntentMessage () {
+        Intent intent = getIntent();
+        String message = null;
+
+        if(intent.hasExtra("message")){
+            message = intent.getStringExtra("message");
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+        }
+
+        return message;
+    }
+
+    /**
+     * Just to call once to set up default site for testing purpose
+     */
     public void addDefaultSite() {
 
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
@@ -59,14 +78,22 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         db.insert(DBContract.Site.TABLE_NAME, null, data);
     }
 
+    /**
+     * Event handle for Add new site button
+     *
+     * @param view
+     */
     public void newSite(View view) {
         Intent intent = new Intent(this, SiteManager.class);
         startActivity(intent);
     }
 
+    /**
+     * Connecting to selected FTP site, it is event handler for connect button click
+     *
+     * @param view
+     */
     public void connect(View view) {
-        //FtpTask task = new FtpTask();
-        //task.execute();
         Intent intent = new Intent(this, TabActivity.class);
         Object item = spinner.getSelectedItem();
 
@@ -74,6 +101,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         startActivity(intent);
     }
 
+    /**
+     * Edit button click event handler
+     *
+     * @param view
+     */
     public void editSite(View view) {
         Intent intent = new Intent(this, SiteManager.class);
         Object item = spinner.getSelectedItem();
@@ -82,6 +114,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         startActivity(intent);
     }
 
+    /**
+     * Event handler for delete button click, it deletes selected site
+     *
+     * @param view
+     */
     public void deleteSite(View view) {
         Object item = spinner.getSelectedItem();
 
@@ -100,6 +137,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         }
     }
 
+    /**
+     * This method loads data of sites in spinner from database
+     *
+     * @param dbHandler
+     */
     private void loadSpinnerData(DatabaseHandler dbHandler) {
         // Spinner Drop down elements
         List<String> labels = dbHandler.getAllSites();
