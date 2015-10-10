@@ -20,7 +20,7 @@ public class LocalTabFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_layout, container, false);
         TextView tv = (TextView) v.findViewById(R.id.text);
         TabActivity activity = (TabActivity) this.getActivity();
-        activity.setLog("new message");
+        //activity.setLog("new message");
         tv.setText(this.getTag() + " Content");
         return v;
     }

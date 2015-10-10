@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
-        //addDefaultSite();
+        addDefaultSite();
 
         // Spinner element
         spinner = (Spinner) findViewById(R.id.spinner);
