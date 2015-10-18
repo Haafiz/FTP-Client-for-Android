@@ -25,8 +25,10 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     private String message;
     private Map<String, String> site;
     private String task = "list";
-    private String[] args;
+    private String[] args  = null;
     private FTPFile[] files;
+    String path = null;
+    String workingDirectory;
 
     public FtpTask(Context mcontext, Map<String, String> msite, String mtask) {
         context = mcontext;
@@ -34,10 +36,11 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
         task = mtask;
     }
 
-    public FtpTask(Context mcontext, Map<String, String> msite, String mtask, String[] args) {
+    public FtpTask(Context mcontext, Map<String, String> msite, String mtask, String path) {
         context = mcontext;
         site = msite;
         task = mtask;
+        this.path = path;
     }
 
     protected FTPClient doInBackground(Void... args) {
@@ -68,10 +71,16 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     }
 
     private FTPClient performTask (FTPClient ftpClient) {
+        if(path == null) {
+            path = "/";
+        }
         try {
             switch (task) {
                 case "list":
-                    files = ftpClient.listFiles("/");
+                    ftpClient.changeWorkingDirectory(path);
+                    files = ftpClient.listFiles();
+                    workingDirectory = ftpClient.printWorkingDirectory();
+                    Log.d("working directory", workingDirectory);
                     break;
                 case "upload":
                     break;
@@ -95,26 +104,26 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
      * @param result
      */
     protected void onPostExecute(FTPClient result) {
-        Log.d("result",files.toString());
+
         if(exception != null) {
             message = exception;
-        }
-
-        switch (task) {
-            case "list":
-                delegate.processListResponse(message, files);
-                break;
-            case "upload":
-                delegate.processUploadResponse(message);
-                break;
-            case "download":
-                delegate.processDownloadResponse(message);
-                break;
-            case "delete":
-                delegate.processDeleteResponse(message);
-                break;
-            default:
-                break;
+        } else {
+            switch (task) {
+                case "list":
+                    delegate.processListResponse(message, files, workingDirectory);
+                    break;
+                case "upload":
+                    delegate.processUploadResponse(message);
+                    break;
+                case "download":
+                    delegate.processDownloadResponse(message);
+                    break;
+                case "delete":
+                    delegate.processDeleteResponse(message);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

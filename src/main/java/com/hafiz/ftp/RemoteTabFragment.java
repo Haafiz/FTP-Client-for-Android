@@ -3,104 +3,110 @@ package com.hafiz.ftp;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
-public class RemoteTabFragment extends Fragment implements FTPResponse{
+    public class RemoteTabFragment extends Fragment implements FTPResponse{
 
-    ArrayAdapter dataAdapter = null;
-    Map<String, String> site;
-    Bundle args;
-    Context context;
+        ArrayAdapter dataAdapter = null;
+        Map<String, String> site;
+        Bundle args;
+        Context context;
+        View view;
+        EditText addressBar;
+        Map<String, FTPFile> fileMap = new HashMap<>();
+        RemoteTabFragment taskDelegate = this;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        args = getArguments();
-    }
-
-    public void setSite(Map<String, String> msite) {
-        site = msite;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        context = getContext();
-        //Array list of countries
-        ArrayList<String> countryList = new ArrayList<String>();
-        String country = "Afghanistan";
-        countryList.add(country);
-        country = "Albania";
-        countryList.add(country);
-        country = "Algeria";
-        countryList.add(country);
-
-        dataAdapter = new ArrayAdapter(context, R.layout.list_row, countryList);
-
-        View v = inflater.inflate(R.layout.fragment_layout, container, false);
-        TabActivity activity = (TabActivity) this.getActivity();
-
-        String sitename = args.getString("sitename");
-        DatabaseHandler dbHandler = new DatabaseHandler(context);
-        Map<String, String> site = dbHandler.getSite(sitename);
-
-        FtpTask task = new FtpTask(context, site, "list");
-        task.delegate = this;
-        task.execute();
-
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2" };
-
-        ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), values);
-
-        ListView listView =  (ListView) v.findViewById(R.id.listview);
-        listView.setAdapter(adapter);
-
-
-        //)
-        /*
-        ArrayList<String> adapterValues = adapter.getSelected();
-
-        Toast.makeText(getContext(),
-                adapterValues.toString(),
-                Toast.LENGTH_LONG).show();
-
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // When clicked, show a toast with the TextView text
-                String country = (String) parent.getItemAtPosition(position);
-                Toast.makeText(getContext(),
-                        "Clicked on Row: " + country,
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-        */
-
-        ListViewAutoScrollHelper listViewAutoScrollHelper = new ListViewAutoScrollHelper(listView);
-
-        return v;
-    }
-
-    public void processListResponse(String output, FTPFile[] files){
-        for (FTPFile file : files) {
-            Log.d("filename", file.getName());
+        public void setAddressBarText(String path) {
+            addressBar.setText(path);
         }
-    }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            args = getArguments();
+        }
+
+        public void setSite(Map<String, String> msite) {
+            site = msite;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            context = getContext();
+
+            view = inflater.inflate(R.layout.fragment_layout, container, false);
+
+            addressBar = (EditText) view.findViewById(R.id.address_bar);
+
+            String sitename = args.getString("sitename");
+            DatabaseHandler dbHandler = new DatabaseHandler(context);
+            site = dbHandler.getSite(sitename);
+
+            FtpTask task = new FtpTask(context, site, "list");
+            task.delegate = taskDelegate;
+            task.execute();
+
+            return view;
+        }
+
+        public void processListResponse(String output, FTPFile[] files, String workingDirectory){
+            ArrayList<String> filenamesList = new ArrayList();
+
+            for (FTPFile file : files) {
+                fileMap.put(file.getName(), file);
+                filenamesList.add(file.getName());
+            }
+
+            String[] filenames = new String[filenamesList.size()];
+            filenames = filenamesList.toArray(filenames);
+
+            ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames);
+
+            ListView listView =  (ListView) view.findViewById(R.id.listview);
+            listView.setAdapter(adapter);
+
+            setAddressBarText(workingDirectory);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d("onItemClick", "" + position);
+                    // When clicked, show a toast with the TextView text
+                    String filename = (String) parent.getItemAtPosition(position);
+                    if (fileMap.get(filename).isDirectory()) {
+                        String appendablePath = addressBar.getText().toString();
+                        if(appendablePath == "/"){
+                            appendablePath = "";
+                        }
+
+                        FtpTask task = new FtpTask(context, site, "list", (appendablePath +"/"+ filename) );
+                        task.delegate = taskDelegate;
+                        task.execute();
+                    }
+                    Toast.makeText(getContext(),
+                            "Clicked on Row: " + filename,
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+            //ListViewAutoScrollHelper listViewAutoScrollHelper = new ListViewAutoScrollHelper(listView);
+        }
 
     public void processUploadResponse(String output) {
 

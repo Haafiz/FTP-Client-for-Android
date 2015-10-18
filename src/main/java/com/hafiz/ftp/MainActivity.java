@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
-        addDefaultSite();
+         //addDefaultSite(dbHandler);
 
         // Spinner element
         spinner = (Spinner) findViewById(R.id.spinner);
@@ -62,9 +62,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
     /**
      * Just to call once to set up default site for testing purpose
      */
-    public void addDefaultSite() {
+    public void addDefaultSite(DatabaseHandler dbHandler) {
 
-        DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
+        //DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
         SQLiteDatabase db = dbHandler.getWritableDatabase();
 
         ContentValues data = new ContentValues();
