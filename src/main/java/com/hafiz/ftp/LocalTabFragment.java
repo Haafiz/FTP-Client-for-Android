@@ -20,9 +20,11 @@ import java.util.ArrayList;
 public class LocalTabFragment extends Fragment {
 
     EditText addressBar;
+    View view;
     String workingDirectory = null;
     Context context = getContext();
     File file;
+    ArrayList<String> filenamesList;
 
     public void setAddressBarText(String path) {
         addressBar.setText(path);
@@ -52,8 +54,6 @@ public class LocalTabFragment extends Fragment {
         }
         Log.d("local working directory", workingDirectory);
 
-        ArrayList<String> filenamesList = new ArrayList();
-
         try {
             if (file.isDirectory()) {
                 File[] files = file.listFiles();
@@ -65,18 +65,23 @@ public class LocalTabFragment extends Fragment {
 
                 setAddressBarText(workingDirectory);
 
-                String[] filenames = new String[filenamesList.size()];
-                filenames = filenamesList.toArray(filenames);
-
-                ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames);
-
-                ListView listView = (ListView) view.findViewById(R.id.listview);
-                listView.setAdapter(adapter);
+                setupListViewAdapter(view);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return view;
+    }
+
+
+    public void setupListViewAdapter(View view){
+        String[] filenames = new String[filenamesList.size()];
+        filenames = filenamesList.toArray(filenames);
+
+        ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames);
+
+        ListView listView = (ListView) view.findViewById(R.id.listview);
+        listView.setAdapter(adapter);
     }
 }
