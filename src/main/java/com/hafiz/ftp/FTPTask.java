@@ -20,7 +20,7 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     public FTPResponse delegate=null;
 
     FTPClient ftpClient;
-    private String exception;
+    private Exception exception;
     private Context context;
     private String message;
     private Map<String, String> site;
@@ -64,7 +64,7 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
 
 
         } catch (Exception e) {
-            exception = e.toString();
+            exception = e;
         }
 
         return ftpClient;
@@ -106,7 +106,7 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     protected void onPostExecute(FTPClient result) {
 
         if(exception != null) {
-            message = exception;
+            delegate.handleException(exception);
         } else {
             switch (task) {
                 case "list":
