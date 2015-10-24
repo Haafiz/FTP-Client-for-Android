@@ -63,16 +63,11 @@ public class LocalTabFragment extends Fragment {
                     Log.d("file", f.getName());
                 }
 
-
-
                 setAddressBarText(workingDirectory);
 
                 String[] filenames = new String[filenamesList.size()];
                 filenames = filenamesList.toArray(filenames);
-                Log.d("filenames", filenames.toString());
-                for (String filename: filenames){
-                    Log.d("Filename", filename);
-                }
+
                 ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames);
 
                 ListView listView = (ListView) view.findViewById(R.id.listview);

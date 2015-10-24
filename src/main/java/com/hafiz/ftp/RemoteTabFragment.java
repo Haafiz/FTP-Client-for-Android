@@ -14,24 +14,29 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RemoteTabFragment extends Fragment implements FTPResponse {
 
-    ArrayAdapter dataAdapter = null;
+    //contains site/connection record
     Map<String, String> site;
+
     Bundle args;
     Context context;
     View view;
+
+    //contains a view to to populate and get its text
     EditText addressBar;
-    Map<String, FTPFile> fileMap = new HashMap<>();
+
+    //to delegate work to this activity after async task
     RemoteTabFragment taskDelegate = this;
+
+    // fileMap and filenamesList will contain loaded files info.
+    Map<String, FTPFile> fileMap = new HashMap<>();
     ArrayList<String> filenamesList = new ArrayList();
 
     public void setAddressBarText(String path) {
@@ -48,6 +53,15 @@ public class RemoteTabFragment extends Fragment implements FTPResponse {
         site = msite;
     }
 
+    /**
+     * Get sitename from arg, get site data from db and connect to site via FTP Task or
+     * just list if files already exist
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,6 +83,14 @@ public class RemoteTabFragment extends Fragment implements FTPResponse {
         return view;
     }
 
+    /**
+     * Implement FTPResponse interface method, which process ftp list response and setup
+     * listview adapter and addressbar
+     *
+     * @param output
+     * @param files
+     * @param workingDirectory
+     */
     public void processListResponse(String output, FTPFile[] files, String workingDirectory) {
 
         for (FTPFile file : files) {
@@ -82,6 +104,9 @@ public class RemoteTabFragment extends Fragment implements FTPResponse {
     }
 
 
+    /**
+     * Setup listViewAdapter and set item click listeners for listview
+     */
     public void setupListViewAdapter() {
         String[] filenames = new String[filenamesList.size()];
         filenames = filenamesList.toArray(filenames);
@@ -101,14 +126,16 @@ public class RemoteTabFragment extends Fragment implements FTPResponse {
 
                 if (fileMap.get(filename).isDirectory()) {
                     Toast.makeText(getContext(), "Loading: " + filename, Toast.LENGTH_LONG).show();
-
                     changeDirectory(filename);
                 }
             }
         });
     }
 
-
+    /**
+     * Change Directory by setting Async Ftp Task
+     * @param filename
+     */
     public void changeDirectory(String filename) {
         String appendablePath = addressBar.getText().toString();
 
