@@ -1,5 +1,7 @@
 package com.hafiz.ftp;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -116,6 +118,17 @@ public class RemoteTabFragment extends Fragment implements FTPResponse {
         ListView listView = (ListView) view.findViewById(R.id.listview);
         listView.setAdapter(adapter);
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                DialogFragment dialog = new RenameDialogFragment();
+                Bundle b = new Bundle();
+                b.putString("filename", (String)parent.getItemAtPosition(position));
+                dialog.setArguments(b);
+                dialog.show(getActivity().getFragmentManager(), "RenameDialogFragment");
+                return true;
+            }
+        });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -127,6 +140,9 @@ public class RemoteTabFragment extends Fragment implements FTPResponse {
                 if (fileMap.get(filename).isDirectory()) {
                     Toast.makeText(getContext(), "Loading: " + filename, Toast.LENGTH_LONG).show();
                     changeDirectory(filename);
+                } else {
+                    //Dialog d = new Dialog();
+                    //d.addContentView();
                 }
             }
         });
