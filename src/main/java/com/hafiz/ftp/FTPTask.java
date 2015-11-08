@@ -2,13 +2,20 @@ package com.hafiz.ftp;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -25,7 +32,7 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     private String message;
     private Map<String, String> site;
     private String task = "list";
-    private String[] args  = null;
+    private Bundle args  = null;
     private FTPFile[] files;
     String path = null;
     String workingDirectory;
@@ -43,13 +50,21 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
         this.path = path;
     }
 
+    public FtpTask(Context mcontext, Map<String, String> msite, String mtask, String path, Bundle args) {
+        context = mcontext;
+        site = msite;
+        task = mtask;
+        this.path = path;
+        this.args = args;
+    }
+
     protected FTPClient doInBackground(Void... args) {
         Log.d("siteobj", site.toString());
 
         try {
             FTPClient ftpClient = new FTPClient();
             ftpClient.connect(site.get("host"));
-            //ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
             ftpClient.login(site.get("login_name"), site.get("password"));
 
@@ -84,15 +99,34 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
                     break;
                 case "upload":
                     break;
+                case "rename":
+                        ftpClient.changeWorkingDirectory(path);
+                        Log.d(args.getString("filename"), args.getString("rename"));
+                        Boolean rename = ftpClient.rename(args.getString("filename"), args.getString("rename"));
+
+                        files = ftpClient.listFiles();
+                        workingDirectory = ftpClient.printWorkingDirectory();
+                    break;
                 case "download":
+                    ftpClient.changeWorkingDirectory(path);
+                    String filename = args.getString("filename");
+                    String localPath = args.getString("localPath");
+
+                    File localFile = new File(localPath+filename);
+                    OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(localFile));
+                    Boolean success = ftpClient.retrieveFile(filename, outputStream);
+
+                    workingDirectory = ftpClient.printWorkingDirectory();
+                    Log.d("working directory", workingDirectory);
                     break;
                 case "delete":
                     break;
                 default:
                     files = ftpClient.listFiles("/");
             }
-        } catch (IOException ex){
-            Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
+        } catch (Exception ex){
+            Log.d(ex.toString(), ex.getMessage());
+            //Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
         }
 
         return ftpClient;
@@ -110,6 +144,9 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
         } else {
             switch (task) {
                 case "list":
+                    delegate.processListResponse(message, files, workingDirectory);
+                    break;
+                case "rename":
                     delegate.processListResponse(message, files, workingDirectory);
                     break;
                 case "upload":

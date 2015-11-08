@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentTabHost;
  * Tab activity to have two tabs in it
  */
 public class TabActivity extends FragmentActivity {
-        private FragmentTabHost mTabHost;
+        public FragmentTabHost mTabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,8 @@ public class TabActivity extends FragmentActivity {
         mTabHost.addTab(
                 mTabHost.newTabSpec("local").setIndicator("Local", null),
                 LocalTabFragment.class, null);
+
+
     }
 
 }

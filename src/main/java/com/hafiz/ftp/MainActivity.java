@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
-         //addDefaultSite(dbHandler);
+        addDefaultSite(dbHandler);
 
         // Spinner element
         spinner = (Spinner) findViewById(R.id.spinner);
@@ -75,7 +75,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         data.put(DBContract.Site.COLUMN_NAME_PASSWORD, "zFUBUWLEjWdiQ");
         data.put(DBContract.Site.COLUMN_NAME_TYPE, "passive");
 
-        db.insert(DBContract.Site.TABLE_NAME, null, data);
+        try {
+            db.insertWithOnConflict(DBContract.Site.TABLE_NAME, null, data, SQLiteDatabase.CONFLICT_IGNORE);
+        } catch (Exception ex) {
+
+        }
+
     }
 
     /**
