@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import org.apache.commons.net.ftp.FTPFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -157,9 +159,11 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
 
                     Bundle args = new Bundle();
                     args.putString("filename", filename);
+
                     TabActivity parentActivity = (TabActivity) getActivity();
-                    View localTab = parentActivity.mTabHost.getChildAt(1);
-                    String address = localTab.findViewById(R.id.address_bar).toString();
+                    File localfile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                    String address = localfile.getPath();
                     args.putString("localPath", address);
                     Log.d("bundle", args.toString());
                     startFtpTask("rename", addressBar.getText().toString(), args);

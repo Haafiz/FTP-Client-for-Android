@@ -10,9 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import org.apache.commons.net.ftp.FTPFile;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,9 +22,10 @@ public class LocalTabFragment extends Fragment {
     String workingDirectory = null;
     Context context = getContext();
     File file;
-    ArrayList<String> filenamesList;
+    ArrayList<String> filenamesList = new ArrayList<String>();
 
     public void setAddressBarText(String path) {
+        Log.d("path", path);
         addressBar.setText(path);
     }
 
@@ -42,28 +41,35 @@ public class LocalTabFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_layout, container, false);
 
         addressBar = (EditText) view.findViewById(R.id.address_bar);
-        Log.d("before", "before working directory");
+
         if(workingDirectory == null) {
             try {
+                Log.d("directory downloads", Environment.DIRECTORY_DOWNLOADS);
+
                 file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             } catch (Exception e) {
-                file = context.getFilesDir();
+                e.printStackTrace();
             }
 
             workingDirectory = file.getPath();
         }
+
+        Boolean fExist = file.exists();
         Log.d("local working directory", workingDirectory);
+        Log.d("File exist:", fExist.toString());
 
         try {
+            setAddressBarText(workingDirectory);
+
             if (file.isDirectory()) {
+
                 File[] files = file.listFiles();
-
+                Log.d("isDirectory","yes");
                 for (File f : files) {
+                    Log.d("in", f.getName());
                     filenamesList.add(f.getName());
-                    Log.d("file", f.getName());
+                    Toast.makeText(getContext(), f.getName(), Toast.LENGTH_LONG).show();
                 }
-
-                setAddressBarText(workingDirectory);
 
                 setupListViewAdapter(view);
             }
@@ -76,6 +82,7 @@ public class LocalTabFragment extends Fragment {
 
 
     public void setupListViewAdapter(View view){
+        Toast.makeText(getContext(), "Size"+filenamesList.size(), Toast.LENGTH_LONG).show();
         String[] filenames = new String[filenamesList.size()];
         filenames = filenamesList.toArray(filenames);
 

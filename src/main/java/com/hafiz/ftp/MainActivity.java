@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
@@ -15,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -29,6 +32,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("Readable", String.valueOf(this.isExternalStorageWritable()));
+        Log.d("Writable", String.valueOf(this.isExternalStorageReadable()));
+        File f=Environment.getExternalStoragePublicDirectory("");
+        Log.d("Writable", f.toString());
+        Log.d("Writable", f.getPath());
+
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
         addDefaultSite(dbHandler);
@@ -40,6 +49,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         loadSpinnerData(dbHandler);
 
         this.showIntentMessage();
+
     }
 
     /**
@@ -200,5 +210,24 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
     public void onNothingSelected(AdapterView<?> arg0) {
         // TODO Auto-generated method stub
 
+    }
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }
