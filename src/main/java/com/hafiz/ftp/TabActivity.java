@@ -9,7 +9,8 @@ import android.support.v4.app.FragmentTabHost;
  * Tab activity to have two tabs in it
  */
 public class TabActivity extends FragmentActivity {
-        public FragmentTabHost mTabHost;
+    public FragmentTabHost mTabHost;
+    public String remoteAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +25,16 @@ public class TabActivity extends FragmentActivity {
         String sitename = getIntent().getStringExtra("site");
 
         // setting up bundle to send to tabs
-        Bundle remoteTabBundle = new Bundle();
-        remoteTabBundle.putString("sitename", sitename);
+        Bundle tabBundle = new Bundle();
+        tabBundle.putString("sitename", sitename);
 
         //Adding tabs with their target classes to provide content
         mTabHost.addTab(
                 mTabHost.newTabSpec("remote").setIndicator("Remote", null),
-                RemoteTabFragment.class, remoteTabBundle);
+                RemoteTabFragment.class, tabBundle);
         mTabHost.addTab(
                 mTabHost.newTabSpec("local").setIndicator("Local", null),
-                LocalTabFragment.class, null);
+                LocalTabFragment.class, tabBundle);
 
 
     }

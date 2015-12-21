@@ -81,6 +81,7 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
 
 
         } catch (Exception e) {
+            e.printStackTrace();
             exception = e;
         }
 
@@ -88,12 +89,14 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
     }
 
     private FTPClient performTask (FTPClient ftpClient) {
+        Log.d(path, ftpClient.toString());
         if(path == null) {
             path = "/";
         }
 
         String filename, localPath;
         File localDir;
+        Boolean success;
 
         try {
             switch (task) {
@@ -103,17 +106,20 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
                     workingDirectory = ftpClient.printWorkingDirectory();
                     Log.d("working directory", workingDirectory);
                     break;
-                case "upload":
+                case "download":
                     ftpClient.changeWorkingDirectory(path);
 
                     filename = args.getString("filename");
+                    Log.d("filename",filename);
                     localPath = args.getString("localPath");
-                    localDir = new File(localPath, filename);
+                    //localDir = new File(localPath, filename);
+                    localDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), filename);
+
                     //File file = new File(localDir, filename);
                     Log.d("localDir", localDir.getPath());
                     OutputStream outputStream = new FileOutputStream(localDir);
                     Log.d("output stream", outputStream.toString());
-                    Boolean success = ftpClient.retrieveFile (filename, outputStream);
+                    success = ftpClient.retrieveFile (filename, outputStream);
 
                     workingDirectory = ftpClient.printWorkingDirectory();
                     Log.d("working directory", workingDirectory);
@@ -126,21 +132,8 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
                         files = ftpClient.listFiles();
                         workingDirectory = ftpClient.printWorkingDirectory();
                     break;
-                case "download":
-                    ftpClient.changeWorkingDirectory(path);
-
-                    filename = args.getString("filename");
-                    localPath = args.getString("localPath");
-                    File localFile = new File(localPath);
-
-                    //File file = new File(localDir, filename);
-                    Log.d("localDir", localFile.getPath());
-                    InputStream inputStream = new FileInputStream(localFile);
-                    Log.d("output stream", inputStream.toString());
-                    Boolean success = ftpClient.storeFile (filename, inputStream);
-
-                    workingDirectory = ftpClient.printWorkingDirectory();
-                    Log.d("working directory", workingDirectory);
+                case "upload":
+                    upload(ftpClient);
                     break;
                 case "delete":
                     break;
@@ -153,6 +146,30 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
         }
 
         return ftpClient;
+    }
+
+    public void upload(FTPClient ftpClient) {
+        try {
+            Log.d("path", path);
+            Log.d("ftpclient", ftpClient.toString());
+
+            ftpClient.changeWorkingDirectory(path);
+
+            String filename = args.getString("filename");
+            String localPath = args.getString("localPath");
+            File localFile = new File(localPath);
+
+            //File file = new File(localDir, filename);
+            Log.d("localDir", localFile.getPath());
+            InputStream inputStream = new FileInputStream(localFile);
+            Log.d("input stream", inputStream.toString());
+            Boolean success = ftpClient.storeFile(filename, inputStream);
+
+            workingDirectory = ftpClient.printWorkingDirectory();
+            Log.d("working directory", workingDirectory);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**

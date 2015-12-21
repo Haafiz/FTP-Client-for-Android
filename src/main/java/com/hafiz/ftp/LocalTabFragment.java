@@ -54,6 +54,8 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        context = getContext();
+
         View view = inflater.inflate(R.layout.fragment_layout, container, false);
 
         addressBar = (EditText) view.findViewById(R.id.address_bar);
@@ -86,10 +88,8 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
                 File[] files = file.listFiles();
                 filenamesList.clear();
                 for (File f : files) {
-                    Log.d("in", f.getName());
                     filenamesList.add(f.getName());
                     fileMap.put(f.getName(), f);
-                    Toast.makeText(getContext(), f.getName(), Toast.LENGTH_LONG).show();
                 }
 
                 setupListViewAdapter(view);
@@ -132,6 +132,8 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
                     args.putString("localPath", fileMap.get(filename).getPath());
 
                     Log.d("bundle", args.toString());
+                    Log.d("address", getRemoteAddress());
+
                     startFtpTask("upload", getRemoteAddress(), args);
                 }
             }
@@ -140,10 +142,11 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
 
     public String getRemoteAddress() {
         TabActivity parentActivity = (TabActivity) getActivity();
-        View remoteTabView = parentActivity.mTabHost.getChildAt(0).findViewById(R.id.address_bar);
-        EditText remoteAddressBar = (EditText) remoteTabView.findViewById(R.id.address_bar);
+        String remoteAddress = parentActivity.remoteAddress;
+//        Log.d("remotetabview", remoteTabView.toString());
+//        EditText remoteAddressBar = (EditText) remoteTabView.findViewById(R.id.address_bar);
 
-        return remoteAddressBar.getText().toString();
+        return remoteAddress;
     }
 
     public void startFtpTask(String operation, String directoryPath, Bundle arguments) {

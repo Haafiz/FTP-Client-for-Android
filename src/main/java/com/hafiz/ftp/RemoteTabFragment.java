@@ -53,6 +53,8 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
     }
 
     public void setAddressBarText(String path) {
+        TabActivity parentActivity = (TabActivity) getActivity();
+        parentActivity.remoteAddress = path;
         addressBar.setText(path);
     }
 
@@ -115,6 +117,8 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
         setupListViewAdapter();
 
         setAddressBarText(workingDirectory);
+
+        Toast.makeText(context, "Loaded", Toast.LENGTH_LONG).show();
     }
 
 
@@ -152,7 +156,11 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
                 Log.d(filename, filename);
 
                 if (fileMap.get(filename).isDirectory()) {
-                    Toast.makeText(getContext(), "Loading: " + filename, Toast.LENGTH_LONG).show();
+                    if(filename == ".") {
+                        Toast.makeText(getContext(), "Reloading list .. ", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Loading: " + filename, Toast.LENGTH_LONG).show();
+                    }
                     changeDirectory(filename);
                 } else {
                     Toast.makeText(getContext(), "Downloading: " + filename, Toast.LENGTH_LONG).show();
