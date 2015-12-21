@@ -166,7 +166,7 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
                     String address = localfile.getPath();
                     args.putString("localPath", address);
                     Log.d("bundle", args.toString());
-                    startFtpTask("rename", addressBar.getText().toString(), args);
+                    startFtpTask("download", addressBar.getText().toString(), args);
                 }
             }
         });
@@ -209,7 +209,7 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
     }
 
     public void processDownloadResponse(String output) {
-
+        Toast.makeText(getContext(), "File downloaded successfully" , Toast.LENGTH_LONG).show();
     }
 
     public void processDeleteResponse(String output) {

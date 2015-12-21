@@ -1,6 +1,7 @@
 package com.hafiz.ftp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -8,21 +9,35 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class LocalTabFragment extends Fragment {
+public class LocalTabFragment extends Fragment implements FTPResponse {
 
     EditText addressBar;
     View view;
     String workingDirectory = null;
     Context context = getContext();
+    Bundle args;
     File file;
-    ArrayList<String> filenamesList = new ArrayList<String>();
+    //contains site/connection record
+    Map<String, String> site;
+
+    //to delegate work to this activity after async task
+    LocalTabFragment taskDelegate = this;
+
+    // fileMap and filenamesList will contain loaded files info.
+    Map<String, File> fileMap = new HashMap<>();
+    ArrayList<String> filenamesList = new ArrayList();
 
     public void setAddressBarText(String path) {
         Log.d("path", path);
@@ -32,6 +47,7 @@ public class LocalTabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        args = getArguments();
     }
 
     @Override
@@ -41,6 +57,10 @@ public class LocalTabFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_layout, container, false);
 
         addressBar = (EditText) view.findViewById(R.id.address_bar);
+
+        String sitename = args.getString("sitename");
+        DatabaseHandler dbHandler = new DatabaseHandler(context);
+        site = dbHandler.getSite(sitename);
 
         if(workingDirectory == null) {
             try {
@@ -64,10 +84,11 @@ public class LocalTabFragment extends Fragment {
             if (file.isDirectory()) {
 
                 File[] files = file.listFiles();
-                Log.d("isDirectory","yes");
+                filenamesList.clear();
                 for (File f : files) {
                     Log.d("in", f.getName());
                     filenamesList.add(f.getName());
+                    fileMap.put(f.getName(), f);
                     Toast.makeText(getContext(), f.getName(), Toast.LENGTH_LONG).show();
                 }
 
@@ -90,5 +111,67 @@ public class LocalTabFragment extends Fragment {
 
         ListView listView = (ListView) view.findViewById(R.id.listview);
         listView.setAdapter(adapter);
+
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("onItemClick", "" + position);
+                // When clicked, show a toast with the TextView text
+                String filename = (String) parent.getItemAtPosition(position);
+                Log.d(filename, filename);
+
+                if (fileMap.get(filename).isDirectory()) {
+
+                } else {
+                    Toast.makeText(getContext(), "Uploading: " + filename, Toast.LENGTH_LONG).show();
+
+                    Bundle args = new Bundle();
+                    args.putString("filename", filename);
+                    args.putString("localPath", fileMap.get(filename).getPath());
+
+                    Log.d("bundle", args.toString());
+                    startFtpTask("upload", getRemoteAddress(), args);
+                }
+            }
+        });
     }
+
+    public String getRemoteAddress() {
+        TabActivity parentActivity = (TabActivity) getActivity();
+        View remoteTabView = parentActivity.mTabHost.getChildAt(0).findViewById(R.id.address_bar);
+        EditText remoteAddressBar = (EditText) remoteTabView.findViewById(R.id.address_bar);
+
+        return remoteAddressBar.getText().toString();
+    }
+
+    public void startFtpTask(String operation, String directoryPath, Bundle arguments) {
+        FtpTask task = new FtpTask(context, site, operation, directoryPath, arguments);
+        task.delegate = taskDelegate;
+        task.execute();
+    }
+
+    public void processUploadResponse(String output) {
+        Toast.makeText(getContext(), "File uploaded successfully" , Toast.LENGTH_LONG).show();
+    }
+
+    public void processDownloadResponse(String output) {
+
+    }
+
+    public void processDeleteResponse(String output) {
+
+    }
+
+    public void handleException(Exception exception) {
+        Intent intent = new Intent(this.getActivity(), MainActivity.class);
+        intent.putExtra("message", exception.toString());
+        startActivity(intent);
+    }
+
+    public void processListResponse(String output, FTPFile[] files, String workingDirectory) {
+
+    }
+
 }
