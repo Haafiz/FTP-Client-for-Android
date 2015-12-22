@@ -84,6 +84,9 @@ public class SiteManager extends Activity {
         data.put(DBContract.Site.COLUMN_NAME_TYPE, type.getText().toString());
 
         long saved = -1;
+
+        db = dbHandler.getWritableDatabase();
+
         if(editId == null) {
             try {
                 saved = db.insertOrThrow(DBContract.Site.TABLE_NAME, null, data);
@@ -92,12 +95,12 @@ public class SiteManager extends Activity {
             }
         } else {
             String[] arr = new String[] {String.valueOf(editId)};
+            Log.d("ID", arr[0]);
             try{
                 saved = db.update(DBContract.Site.TABLE_NAME, data, DBContract.Site._ID + "=?", arr);
             } catch (SQLiteConstraintException ex) {
                 Toast.makeText(getApplicationContext(),"Site name already exist",Toast.LENGTH_LONG).show();
             }
-
         }
 
         if( saved != -1) {

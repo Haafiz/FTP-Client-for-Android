@@ -1,11 +1,14 @@
 package com.hafiz.ftp;
 
+import android.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,12 +22,22 @@ public class ListCustomAdapter extends ArrayAdapter<String>{
     private String[] values;
     private final Context context;
     private ArrayList<String> selected = new ArrayList();
+    private RemoteTabFragment fragment;
+    private Boolean removeDelete = false;
 
+
+    public ListCustomAdapter(Context context, String[] values, RemoteTabFragment fragment) {
+        super(context, -1, values);
+        this.context = context;
+        this.values = values;
+        this.fragment = fragment;
+    }
 
     public ListCustomAdapter(Context context, String[] values) {
         super(context, -1, values);
         this.context = context;
         this.values = values;
+        this.removeDelete = true;
     }
 
     public String[] getValues(){
@@ -40,27 +53,46 @@ public class ListCustomAdapter extends ArrayAdapter<String>{
         TextView textView = (TextView) rowView.findViewById(R.id.listText);
         textView.setText(values[position]);
 
-        CheckBox cb = (CheckBox) rowView.findViewById(R.id.listCheckbox);
-        cb.setTag(position);
-        Log.d("values", values.toString());
-
-
-        cb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CheckBox cb = (CheckBox) v;
-                Integer position = (Integer) cb.getTag();
-                if (cb.isChecked()) {
-                    Log.d("values", values.toString());
-                    Log.d("position", position.toString());
-                    setSelected(values[position]);
-                } else {
-                    removeSelected(values[position]);
-                }
-
-                Toast.makeText(context, values[position], Toast.LENGTH_LONG).show();
-            }
-        });
+//        Button btn = (Button) rowView.findViewById(R.id.delete_button);
+//        if(this.removeDelete){
+//            btn.setVisibility(View.INVISIBLE);
+//        } else {
+//            btn.setTag(position);
+//
+//            btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Button btn = (Button) v;
+//                    btn.getTag(position);
+//                    String filename = values[position];
+//                    Log.d("filename", filename);
+//                    Bundle args = new Bundle();
+//                    args.putString("filename", filename);
+//                    fragment.startFtpTask("delete", fragment.addressBar.getText().toString(), args);
+//                }
+//            });
+//        }
+//        CheckBox cb = (CheckBox) rowView.findViewById(R.id.listCheckbox);
+//        cb.setTag(position);
+//        Log.d("values", values.toString());
+//
+//
+//        cb.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                CheckBox cb = (CheckBox) v;
+//                Integer position = (Integer) cb.getTag();
+//                if (cb.isChecked()) {
+//                    Log.d("values", values.toString());
+//                    Log.d("position", position.toString());
+//                    setSelected(values[position]);
+//                } else {
+//                    removeSelected(values[position]);
+//                }
+//
+//                Toast.makeText(context, values[position], Toast.LENGTH_LONG).show();
+//            }
+//        });
 
         return rowView;
     }

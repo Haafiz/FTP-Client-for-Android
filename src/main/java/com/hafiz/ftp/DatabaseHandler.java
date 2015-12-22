@@ -105,7 +105,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // closing connection
         cursor.close();
-        db.close();
 
         // returning sites
         return site;

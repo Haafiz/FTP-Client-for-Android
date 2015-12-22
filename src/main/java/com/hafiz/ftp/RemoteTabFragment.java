@@ -129,7 +129,7 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
         String[] filenames = new String[filenamesList.size()];
         filenames = filenamesList.toArray(filenames);
 
-        ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames);
+        ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames, this);
 
         ListView listView = (ListView) view.findViewById(R.id.listview);
         listView.setAdapter(adapter);
