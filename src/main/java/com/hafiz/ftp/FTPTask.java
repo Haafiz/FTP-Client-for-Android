@@ -98,17 +98,15 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
         File localDir;
         Boolean success;
 
+
         try {
+            ftpClient.changeWorkingDirectory(path);
+
             switch (task) {
                 case "list":
-                    ftpClient.changeWorkingDirectory(path);
                     files = ftpClient.listFiles();
-                    workingDirectory = ftpClient.printWorkingDirectory();
-                    Log.d("working directory", workingDirectory);
                     break;
                 case "download":
-                    ftpClient.changeWorkingDirectory(path);
-
                     filename = args.getString("filename");
                     Log.d("filename",filename);
                     localPath = args.getString("localPath");
@@ -121,25 +119,27 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
                     Log.d("output stream", outputStream.toString());
                     success = ftpClient.retrieveFile (filename, outputStream);
 
-                    workingDirectory = ftpClient.printWorkingDirectory();
-                    Log.d("working directory", workingDirectory);
                     break;
                 case "rename":
-                        ftpClient.changeWorkingDirectory(path);
                         Log.d(args.getString("filename"), args.getString("rename"));
                         Boolean rename = ftpClient.rename(args.getString("filename"), args.getString("rename"));
 
                         files = ftpClient.listFiles();
-                        workingDirectory = ftpClient.printWorkingDirectory();
                     break;
                 case "upload":
                     upload(ftpClient);
                     break;
                 case "delete":
+                    filename = args.getString("filename");
+                    String filePath = path + filename;
+                    Log.d("filepath", filePath);
+                    ftpClient.deleteFile(filePath);
                     break;
                 default:
                     files = ftpClient.listFiles("/");
             }
+
+            workingDirectory = ftpClient.printWorkingDirectory();
         } catch (IOException ex){
             ex.printStackTrace();
             //Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
@@ -150,10 +150,6 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
 
     public void upload(FTPClient ftpClient) {
         try {
-            Log.d("path", path);
-            Log.d("ftpclient", ftpClient.toString());
-
-            ftpClient.changeWorkingDirectory(path);
 
             String filename = args.getString("filename");
             String localPath = args.getString("localPath");
@@ -165,8 +161,6 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
             Log.d("input stream", inputStream.toString());
             Boolean success = ftpClient.storeFile(filename, inputStream);
 
-            workingDirectory = ftpClient.printWorkingDirectory();
-            Log.d("working directory", workingDirectory);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -103,7 +103,6 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
 
 
     public void setupListViewAdapter(View view){
-        Toast.makeText(getContext(), "Size"+filenamesList.size(), Toast.LENGTH_LONG).show();
         String[] filenames = new String[filenamesList.size()];
         filenames = filenamesList.toArray(filenames);
 
@@ -111,6 +110,7 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
 
         ListView listView = (ListView) view.findViewById(R.id.listview);
         listView.setAdapter(adapter);
+
 
 
 
@@ -143,8 +143,6 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
     public String getRemoteAddress() {
         TabActivity parentActivity = (TabActivity) getActivity();
         String remoteAddress = parentActivity.remoteAddress;
-//        Log.d("remotetabview", remoteTabView.toString());
-//        EditText remoteAddressBar = (EditText) remoteTabView.findViewById(R.id.address_bar);
 
         return remoteAddress;
     }

@@ -11,15 +11,15 @@
             android:focusable="false"
             android:text="TextView" />
 
-        <!--<Button-->
-            <!--style="?android:attr/buttonStyleSmall"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Delete"-->
-            <!--android:focusable="false"-->
-            <!--android:id="@+id/delete_button"-->
-            <!--android:layout_gravity="right"-->
-            <!--android:layout_weight="2" />-->
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:focusable="false"
+            android:id="@+id/delete_button"
+            android:layout_gravity="right"
+            android:layout_weight="2" />
 
         <!--<CheckBox-->
             <!--android:id="@+id/listCheckbox"-->

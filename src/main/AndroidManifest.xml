@@ -31,12 +31,8 @@
             android:label="@string/title_activity_main2" >
         </activity>
         <activity
-            android:name=".OperationActivity"
-            android:label="@string/title_activity_operation" >
-        </activity>
-        <activity
             android:name=".TabActivity"
-            android:label="@string/title_activity_tab" >
+            android:label="FTP Client" >
         </activity>
     </application>
 

@@ -1,6 +1,5 @@
 package com.hafiz.ftp;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,11 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Hafiz on 9/24/2015.
@@ -22,15 +20,19 @@ public class ListCustomAdapter extends ArrayAdapter<String>{
     private String[] values;
     private final Context context;
     private ArrayList<String> selected = new ArrayList();
-    private RemoteTabFragment fragment;
+    private RemoteTabFragment fragment = null;
     private Boolean removeDelete = false;
+    private Boolean[] deleteables;
+    private HashMap fileMap;
 
 
-    public ListCustomAdapter(Context context, String[] values, RemoteTabFragment fragment) {
+    public ListCustomAdapter(Context context, String[] values, RemoteTabFragment fragment,  Boolean[] deleteables, HashMap fileMap) {
         super(context, -1, values);
         this.context = context;
         this.values = values;
         this.fragment = fragment;
+        this.deleteables = deleteables;
+        this.fileMap = fileMap;
     }
 
     public ListCustomAdapter(Context context, String[] values) {
@@ -53,25 +55,26 @@ public class ListCustomAdapter extends ArrayAdapter<String>{
         TextView textView = (TextView) rowView.findViewById(R.id.listText);
         textView.setText(values[position]);
 
-//        Button btn = (Button) rowView.findViewById(R.id.delete_button);
-//        if(this.removeDelete){
-//            btn.setVisibility(View.INVISIBLE);
-//        } else {
-//            btn.setTag(position);
-//
-//            btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Button btn = (Button) v;
-//                    btn.getTag(position);
-//                    String filename = values[position];
-//                    Log.d("filename", filename);
-//                    Bundle args = new Bundle();
-//                    args.putString("filename", filename);
-//                    fragment.startFtpTask("delete", fragment.addressBar.getText().toString(), args);
-//                }
-//            });
-//        }
+        Button btn = (Button) rowView.findViewById(R.id.delete_button);
+        if(fragment == null || !this.deleteables[position]){
+            btn.setVisibility(View.INVISIBLE);
+        } else {
+            btn.setTag(position);
+
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Button btn = (Button) v;
+                    btn.getTag(position);
+                    String filename = values[position];
+                    Log.d("filename", filename);
+
+                    Bundle args = new Bundle();
+                    args.putString("filename", filename);
+                    fragment.startFtpTask("delete", fragment.addressBar.getText().toString(), args);
+                }
+            });
+        }
 //        CheckBox cb = (CheckBox) rowView.findViewById(R.id.listCheckbox);
 //        cb.setTag(position);
 //        Log.d("values", values.toString());

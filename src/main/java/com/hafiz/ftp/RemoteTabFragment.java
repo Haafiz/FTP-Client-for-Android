@@ -1,7 +1,5 @@
 package com.hafiz.ftp;
 
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -40,8 +37,9 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
     RemoteTabFragment taskDelegate = this;
 
     // fileMap and filenamesList will contain loaded files info.
-    Map<String, FTPFile> fileMap = new HashMap<>();
+    HashMap<String, FTPFile> fileMap = new HashMap<>();
     ArrayList<String> filenamesList = new ArrayList();
+    ArrayList<Boolean> deleteablesList = new ArrayList();
 
     public void onDialogPositiveClick(RenameDialogFragment dialogFragment, String filename, EditText rename) {
         Bundle args = new Bundle();
@@ -109,9 +107,12 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
     public void processListResponse(String output, FTPFile[] files, String workingDirectory) {
 
         filenamesList.clear();
+        deleteablesList.clear();
         for (FTPFile file : files) {
             fileMap.put(file.getName(), file);
             filenamesList.add(file.getName());
+            Boolean isEmpty = (file.getSize() == 0);
+            deleteablesList.add((!file.isDirectory() || isEmpty) );
         }
 
         setupListViewAdapter();
@@ -129,7 +130,10 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
         String[] filenames = new String[filenamesList.size()];
         filenames = filenamesList.toArray(filenames);
 
-        ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames, this);
+        Boolean[] deletables = new Boolean[filenamesList.size()];
+        deletables = deleteablesList.toArray(deletables);
+
+        ListCustomAdapter adapter = new ListCustomAdapter(getActivity(), filenames, this, deletables, fileMap);
 
         ListView listView = (ListView) view.findViewById(R.id.listview);
         listView.setAdapter(adapter);
@@ -139,6 +143,7 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 RenameDialogFragment dialog = new RenameDialogFragment();
                 dialog.mListener = RemoteTabFragment.this;
+
                 Bundle b = new Bundle();
                 b.putString("filename", (String) parent.getItemAtPosition(position));
                 dialog.setArguments(b);
@@ -217,11 +222,13 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
     }
 
     public void processDownloadResponse(String output) {
-        Toast.makeText(getContext(), "File downloaded successfully" , Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "File downloaded" , Toast.LENGTH_LONG).show();
     }
 
     public void processDeleteResponse(String output) {
-
+        Toast.makeText(getContext(), "Deleted" , Toast.LENGTH_LONG).show();
+        String directoryPath = addressBar.getText().toString();
+        startFtpTask("list", directoryPath);
     }
 
     public void handleException(Exception exception) {
