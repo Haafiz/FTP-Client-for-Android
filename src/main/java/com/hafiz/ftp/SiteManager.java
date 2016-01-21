@@ -72,22 +72,25 @@ public class SiteManager extends Activity {
         EditText password = (EditText) findViewById(R.id.password);
         RadioGroup grp =  (RadioGroup) findViewById(R.id.type);
 
+        int selectedID = grp.getCheckedRadioButtonId();
+        RadioButton type = (RadioButton) findViewById(selectedID);
+
         if(sitename.length() < 1) {
             Toast.makeText(getApplicationContext(), "site name cannot be empty", Toast.LENGTH_LONG).show();
-            return false;
-        } else if(login.length() < 1) {
-            Toast.makeText(getApplicationContext(), "Login cannot be empty", Toast.LENGTH_LONG).show();
             return false;
         } else if(host.length() < 1) {
             Toast.makeText(getApplicationContext(), "Host cannot be empty", Toast.LENGTH_LONG).show();
             return false;
+        } else if(login.length() < 1) {
+            Toast.makeText(getApplicationContext(), "Login cannot be empty", Toast.LENGTH_LONG).show();
+            return false;
         } else if(password.length() < 1) {
             Toast.makeText(getApplicationContext(), "Password cannot be empty", Toast.LENGTH_LONG).show();
             return false;
+        } else if(type == null) {
+            Toast.makeText(getApplicationContext(), "Please select a valid type", Toast.LENGTH_LONG).show();
+            return false;
         }
-
-        int selectedID = grp.getCheckedRadioButtonId();
-        RadioButton type = (RadioButton) findViewById(selectedID);
 
         ContentValues data = new ContentValues();
 
