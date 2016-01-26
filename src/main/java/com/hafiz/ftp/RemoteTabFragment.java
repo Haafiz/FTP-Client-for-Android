@@ -161,7 +161,7 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
                 Log.d(filename, filename);
 
                 if (fileMap.get(filename).isDirectory()) {
-                    if(filename == ".") {
+                    if (filename == ".") {
                         Toast.makeText(getContext(), "Reloading list .. ", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getContext(), "Loading: " + filename, Toast.LENGTH_LONG).show();
@@ -235,6 +235,13 @@ public class RemoteTabFragment extends Fragment implements FTPResponse, RenameDi
         Intent intent = new Intent(this.getActivity(), MainActivity.class);
         intent.putExtra("message", exception.toString());
         startActivity(intent);
+    }
+
+    public void invalidConnectionError(String message){
+        Intent intent = new Intent(this.getActivity(), MainActivity.class);
+        intent.putExtra("message", message);
+        startActivity(intent);
+
     }
 
 

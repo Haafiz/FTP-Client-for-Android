@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -32,15 +33,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("Readable", String.valueOf(this.isExternalStorageWritable()));
-        Log.d("Writable", String.valueOf(this.isExternalStorageReadable()));
-        File f=Environment.getExternalStoragePublicDirectory("");
-        Log.d("Writable", f.toString());
-        Log.d("Writable", f.getPath());
+        File f = Environment.getExternalStoragePublicDirectory("");
 
         // database handler
         DatabaseHandler dbHandler = new DatabaseHandler(getApplicationContext());
-        addDefaultSite(dbHandler);
+        //addDefaultSite(dbHandler);
 
         // Spinner element
         spinner = (Spinner) findViewById(R.id.spinner);
@@ -170,17 +167,25 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
         // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
+
+        if(labels.size() == 0){
+            Button deleteButton = (Button) findViewById(R.id.delete_button);
+            Button editButton = (Button) findViewById(R.id.edit_button);
+            Button connectButton = (Button) findViewById(R.id.connect_button);
+
+            deleteButton.setEnabled(false);
+            editButton.setEnabled(false);
+            connectButton.setEnabled(false);
+        }
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position,
-                               long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         String label = parent.getItemAtPosition(position).toString();
 
         // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "You selected: " + label,
-                Toast.LENGTH_LONG).show();
+        Toast.makeText(parent.getContext(), "You selected: " + label, Toast.LENGTH_LONG).show();
 
     }
 

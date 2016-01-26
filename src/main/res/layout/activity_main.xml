@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_weight="1"
+            android:id="@+id/delete_button"
             android:onClick="deleteSite"
             android:text="Delete"/>
         <Button
@@ -43,6 +44,7 @@
             android:layout_gravity="left"
             android:layout_weight="1"
             android:onClick="editSite"
+            android:id="@+id/edit_button"
             android:text="Edit"/>
         <Button
             android:layout_width="match_parent"
@@ -50,6 +52,7 @@
             android:layout_gravity="left"
             android:layout_weight="1"
             android:onClick="connect"
+            android:id="@+id/connect_button"
             android:text="Connect"/>
     </LinearLayout>
     <Button
@@ -58,5 +61,6 @@
         android:layout_gravity="left"
         android:layout_marginTop="50dp"
         android:onClick="newSite"
+        android:id="@+id/new_site_button"
         android:text="New Site"/>
 </LinearLayout>

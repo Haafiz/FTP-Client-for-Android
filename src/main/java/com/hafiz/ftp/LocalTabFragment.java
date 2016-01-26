@@ -175,4 +175,8 @@ public class LocalTabFragment extends Fragment implements FTPResponse {
 
     }
 
+    public void invalidConnectionError(String message) {
+
+    }
+
 }

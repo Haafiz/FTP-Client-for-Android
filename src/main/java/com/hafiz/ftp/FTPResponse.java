@@ -14,4 +14,5 @@ public interface FTPResponse {
     void processDeleteResponse(String output);
     void setAddressBarText(String path);
     void handleException(Exception exception);
+    void invalidConnectionError(String message);
 }

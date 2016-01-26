@@ -68,7 +68,12 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
             ftpClient.connect(site.get("host"));
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
-            ftpClient.login(site.get("login_name"), site.get("password"));
+            Boolean connect = ftpClient.login(site.get("login_name"), site.get("password"));
+
+            if(!connect) {
+                String reply = ftpClient.getReplyString();
+                delegate.invalidConnectionError(reply);
+            }
 
             performTask(ftpClient);
 
@@ -78,7 +83,6 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
             } else {
                 message = reply;
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,7 +135,10 @@ class FtpTask extends AsyncTask<Void, Void, FTPClient> {
                     break;
                 case "delete":
                     filename = args.getString("filename");
-                    String filePath = path + filename;
+                    if(path == "/"){
+                        path = "";
+                    }
+                    String filePath = path + "/" + filename;
                     Log.d("filepath", filePath);
                     ftpClient.deleteFile(filePath);
                     break;
